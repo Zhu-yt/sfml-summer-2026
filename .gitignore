@@ -67,3 +67,28 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+#Build outputs
+build/
+out/
+x64/
+x86/
+Debug/
+Release/
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+
+# SFML specific
+sfml-*/
+
+#保留资源目录
+!assets/
