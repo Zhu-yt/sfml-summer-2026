@@ -13,7 +13,7 @@
 
 ```bash
 # 克隆
-git clone https://github.com/你的用户名/sfml-summer-2026.git
+git clone https://github.com/Zhu-yt/sfml-summer-2026.git
 cd sfml-summer-2026
 
 # 构建（需要 CMake + SFML）
