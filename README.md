@@ -20,5 +20,5 @@ cd sfml-summer-2026
 cmake -B build -A x64
 cmake --build build --config Release
 
-#运行
+#运行(确保 SFML DLL 在 .exe 同目录下)
 .\build\Release\SpaceShooter.exe
