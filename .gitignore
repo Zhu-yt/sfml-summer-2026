@@ -74,6 +74,9 @@ Testing/
 *.suo
 *.sln.docstates
 
+# Visual Studio Code
+.vscode/
+
 #Build outputs
 build/
 out/
