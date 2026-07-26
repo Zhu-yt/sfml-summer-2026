@@ -17,5 +17,8 @@ git clone https://github.com/Zhu-yt/sfml-summer-2026.git
 cd sfml-summer-2026
 
 # 构建（需要 CMake + SFML）
-cmake -B build
+cmake -B build -A x64
 cmake --build build --config Release
+
+#运行
+.\build\Release\SpaceShooter.exe
