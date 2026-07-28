@@ -14,17 +14,11 @@ Game::Game()
 
     if (!mPlayerTexture.loadFromFile("assets/textures/player.png")) {
         std::cout << "ERROR: Failed to load player.png!\n";
-    }else {
-        std::cout << "SUCCESS: Texture loaded!\n";
     }
 
     mPlayer.setTexture(mPlayerTexture);
 
-    // mPlayerTexture.create(128,128);
-    // mPlayer.setTexture(mPlayerTexture);
-    // mPlayer.setColor(sf::Color::Red);
-    
-    mPlayer.setPosition(336.f, 472.f); //飞机起始放在底部中间 
+    mPlayer.setPosition(336.f, 472.f); //飞机起始放在底部中间
 }
 
 void Game::run(){
