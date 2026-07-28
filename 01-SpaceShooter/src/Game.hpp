@@ -15,7 +15,8 @@ class Game{
 
         sf::RenderWindow mWindow;
 
-        sf::RectangleShape mPlayer;
+        sf::Texture mPlayerTexture;
+        sf::Sprite mPlayer;
 
         bool mIsMovingLeft;
         bool mIsMovingRight;

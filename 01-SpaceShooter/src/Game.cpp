@@ -1,18 +1,30 @@
 #include "Game.hpp"
+#include <iostream>
 
 const float Game::PlayerSpeed = 300.f;
 
 Game::Game()
 : mWindow(sf::VideoMode(800, 600), "Space Shooter - Week 1")
-, mPlayer(sf::Vector2f(50.f, 50.f))
 , mIsMovingLeft(false)
 , mIsMovingRight(false)
 , mIsMovingUp(false)
 , mIsMovingDown(false)
 {
     mWindow.setFramerateLimit(60);
-    mPlayer.setFillColor(sf::Color::Green);
-    mPlayer.setPosition(375.f, 500.f); //飞机起始放在底部中间
+
+    if (!mPlayerTexture.loadFromFile("assets/textures/player.png")) {
+        std::cout << "ERROR: Failed to load player.png!\n";
+    }else {
+        std::cout << "SUCCESS: Texture loaded!\n";
+    }
+
+    mPlayer.setTexture(mPlayerTexture);
+
+    // mPlayerTexture.create(128,128);
+    // mPlayer.setTexture(mPlayerTexture);
+    // mPlayer.setColor(sf::Color::Red);
+    
+    mPlayer.setPosition(336.f, 472.f); //飞机起始放在底部中间 
 }
 
 void Game::run(){
@@ -91,17 +103,17 @@ void Game::update(sf::Time deltaTime){
     //边界限制
     sf::Vector2f pos = mPlayer.getPosition();
 
-    if(pos.x < 0.f){
-        pos.x = 0.f;
+    if(pos.x < -31.f){
+        pos.x = -31.f;
     }
-    if(pos.x > 750.f){
-        pos.x = 750.f;
+    if(pos.x > 800.f - 97.f){
+        pos.x = 800.f - 97.f;
     }
     if(pos.y < 0.f){
         pos.y = 0.f;
     }
-    if(pos.y > 550.f){
-        pos.y = 550.f;
+    if(pos.y > 600.f - 79.f){
+        pos.y = 600.f - 79.f;
     }
 
     mPlayer.setPosition(pos);

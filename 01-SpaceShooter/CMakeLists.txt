@@ -8,6 +8,6 @@ set(SFML_DIR "C:/SFML-2.6.2/lib/cmake/SFML" CACHE PATH "SFML config directory")
 
 find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
 
-add_executable(SpaceShooter src/main.cpp)
+add_executable(SpaceShooter src/main.cpp src/Game.cpp)
 
 target_link_libraries(SpaceShooter PRIVATE sfml-graphics sfml-window sfml-system)
