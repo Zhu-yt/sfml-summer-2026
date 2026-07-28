@@ -12,12 +12,10 @@ Game::Game()
 {
     mWindow.setFramerateLimit(60);
 
-    if (!mPlayerTexture.loadFromFile("assets/textures/player.png")) {
-        std::cout << "ERROR: Failed to load player.png!\n";
-    }
+    //使用 ResourceHolder 加载纹理
+    mTextures.load(Textures::Player, "assets/textures/player.png");
 
-    mPlayer.setTexture(mPlayerTexture);
-
+    mPlayer.setTexture(mTextures.get(Textures::Player));
     mPlayer.setPosition(336.f, 472.f); //飞机起始放在底部中间
 }
 

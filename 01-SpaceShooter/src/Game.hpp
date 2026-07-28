@@ -3,6 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "ResourceHolder.hpp"
+#include "ResourceIdentifiers.hpp"
+
 class Game{
     public:
         Game();
@@ -13,7 +16,10 @@ class Game{
         void update(sf::Time deltaTime);
         void render();
 
+    private:
         sf::RenderWindow mWindow;
+
+        ResourceHolder<sf::Texture, Textures::ID> mTextures;
 
         sf::Texture mPlayerTexture;
         sf::Sprite mPlayer;
