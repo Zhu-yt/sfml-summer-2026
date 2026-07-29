@@ -2,9 +2,7 @@
 #define GAME_HPP
 
 #include <SFML/Graphics.hpp>
-
-#include "ResourceHolder.hpp"
-#include "ResourceIdentifiers.hpp"
+#include "World.hpp"
 
 class Game{
     public:
@@ -13,24 +11,10 @@ class Game{
 
     private:
         void processEvents();
-        void update(sf::Time deltaTime);
-        void render();
 
     private:
         sf::RenderWindow mWindow;
-
-        ResourceHolder<sf::Texture, Textures::ID> mTextures;
-
-        sf::Texture mPlayerTexture;
-        sf::Sprite mPlayer;
-
-        bool mIsMovingLeft;
-        bool mIsMovingRight;
-        bool mIsMovingUp;
-        bool mIsMovingDown;
-
-        static const float PlayerSpeed;
-
+        World mWorld;
 };
 
 #endif // GAME_HPP
