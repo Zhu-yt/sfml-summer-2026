@@ -6,10 +6,11 @@
 #include <algorithm>
 #include "ResourceHolder.hpp"
 #include "ResourceIdentifiers.hpp"
+#include "Aircraft.hpp"
 
 class World{
     public:
-        World(sf::RenderWindow& window);
+        explicit World(sf::RenderWindow& window);
 
         void handleEvent(const sf::Event& event);
         void update(sf::Time dt);
@@ -18,24 +19,30 @@ class World{
     private:
         void loadTextures();
         void buildScene();
+        void spawnEnemy();
         void shoot();
 
     private:
         sf::RenderWindow& mWindow;
         ResourceHolder<sf::Texture, Textures::ID> mTextures;
-        sf::Sprite mPlayer;
+        
+        std::unique_ptr<Aircraft> mPlayer;
+        std::vector<std::unique_ptr<Aircraft>> mEnemies;
+
+        std::vector<sf::RectangleShape> mBullets;
 
         bool mIsMovingLeft;
         bool mIsMovingRight;
         bool mIsMovingUp;
         bool mIsMovingDown;
-
-        std::vector<sf::RectangleShape> mBullets;
-        sf::Clock mShootClock;
-        const float ShootCooldown = 0.2f;
         bool mIsShooting;
 
+        sf::Clock mSpawnClock;
+        sf::Clock mShootClock;
+
         static const float PlayerSpeed;
+        static const float ShootCooldown;
+        static const float SpawnCooldown;
 };
 
 #endif //WORLD_HPP

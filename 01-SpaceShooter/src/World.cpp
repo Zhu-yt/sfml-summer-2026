@@ -1,6 +1,8 @@
 ﻿#include "World.hpp"
 
 const float World::PlayerSpeed = 300.f;
+const float World::ShootCooldown = 0.2f;
+const float World::SpawnCooldown = 2.0f;
 
 World::World(sf::RenderWindow& window)
 :mWindow(window)
@@ -18,8 +20,8 @@ void World::loadTextures(){
 }
 
 void World::buildScene(){
-    mPlayer.setTexture(mTextures.get(Textures::Player));
-    mPlayer.setPosition(336.f, 472.f);
+    mPlayer = std::make_unique<Aircraft>(Aircraft::Type::Player, mTextures);
+    mPlayer->setPosition(sf::Vector2f(336.f, 472.f));
 }
 
 void World::handleEvent(const sf::Event& event){
@@ -71,16 +73,16 @@ void World::update(sf::Time dt){
     float delta = dt.asSeconds();
 
     if(mIsMovingLeft){
-        mPlayer.move(-PlayerSpeed * delta, 0.f);
+        mPlayer->move(sf::Vector2f(-PlayerSpeed * delta, 0.f));
     }
     if(mIsMovingRight){
-        mPlayer.move(PlayerSpeed * delta, 0.f);
+        mPlayer->move(sf::Vector2f(PlayerSpeed * delta, 0.f));
     }
     if(mIsMovingUp){
-        mPlayer.move(0.f, -PlayerSpeed * delta);
+        mPlayer->move(sf::Vector2f(0.f, -PlayerSpeed * delta));
     }
     if(mIsMovingDown){
-        mPlayer.move(0.f, PlayerSpeed * delta);
+        mPlayer->move(sf::Vector2f(0.f, PlayerSpeed * delta));
     }
     if(mIsShooting){
         shoot();
@@ -100,8 +102,22 @@ void World::update(sf::Time dt){
         mBullets.end()
     );
 
+    spawnEnemy();
+
+    for(auto& enemy : mEnemies){
+        enemy->update(dt);
+    }
+
+    mEnemies.erase(
+        std::remove_if(mEnemies.begin(), mEnemies.end(), 
+            [](const std::unique_ptr<Aircraft>& e){
+                return e->getPosition().y > 600.f + 79.f;
+        }),
+        mEnemies.end()
+    );
+
     //边界限制
-    sf::Vector2f pos = mPlayer.getPosition();
+    sf::Vector2f pos = mPlayer->getPosition();
 
     if(pos.x < -31.f){
         pos.x = -31.f;
@@ -116,13 +132,18 @@ void World::update(sf::Time dt){
         pos.y = 600.f - 79.f;
     }
 
-    mPlayer.setPosition(pos);
+    mPlayer->setPosition(pos);
 }
 
 void World::draw(){
     mWindow.clear(sf::Color::Black);
 
-    mWindow.draw(mPlayer);
+    mPlayer->draw(mWindow);
+
+    for(auto& enemy : mEnemies){
+        enemy->draw(mWindow);
+    }
+
     for(const auto& bullet : mBullets){
         mWindow.draw(bullet);
     }
@@ -143,8 +164,23 @@ void World::shoot(){
     bullet.setFillColor(sf::Color::White);
 
     //从飞机正上方发射
-    sf::Vector2f playerPos = mPlayer.getPosition();
+    sf::Vector2f playerPos = mPlayer->getPosition();
     bullet.setPosition(playerPos.x + 62.f, playerPos.y);
 
     mBullets.push_back(bullet);
+}
+
+void World::spawnEnemy(){
+    if(mSpawnClock.getElapsedTime().asSeconds() < SpawnCooldown){
+        return;
+    }
+
+    mSpawnClock.restart();
+
+    auto enemy = std::make_unique<Aircraft>(Aircraft::Type::Enemy, mTextures);
+
+    float x = static_cast<float>(rand() % (800 - 66)) - 31.f;
+    enemy->setPosition(sf::Vector2f(x, -128.f));
+
+    mEnemies.push_back(std::move(enemy));
 }
