@@ -1,4 +1,5 @@
 ﻿#include "World.hpp"
+#include <iostream>
 
 const float World::PlayerSpeed = 300.f;
 const float World::ShootCooldown = 0.2f;
@@ -10,7 +11,8 @@ World::World(sf::RenderWindow& window)
 ,mIsMovingRight(false)
 ,mIsMovingUp(false)
 ,mIsMovingDown(false)
-,mIsShooting(false){
+,mIsShooting(false)
+,mScore(0){
     loadTextures();
     buildScene();
 }
@@ -108,6 +110,7 @@ void World::update(sf::Time dt){
         enemy->update(dt);
     }
 
+    //敌人消失
     mEnemies.erase(
         std::remove_if(mEnemies.begin(), mEnemies.end(), 
             [](const std::unique_ptr<Aircraft>& e){
@@ -115,6 +118,29 @@ void World::update(sf::Time dt){
         }),
         mEnemies.end()
     );
+
+    //碰撞检测
+    for(auto bulletIt = mBullets.begin(); bulletIt != mBullets.end(); ){
+        bool hit = false;
+
+        for(auto enemyIt = mEnemies.begin(); enemyIt != mEnemies.end(); ){
+            if(bulletIt->getGlobalBounds().intersects((*enemyIt)->getBoundingRect())){
+                enemyIt = mEnemies.erase(enemyIt);
+                hit = true;
+                mScore += 100;
+                std::cout << "Score: " << mScore << "\n";
+                break;
+            }else{
+                ++enemyIt;
+            }
+        }
+
+        if(hit){
+            bulletIt = mBullets.erase(bulletIt);
+        }else{
+            ++bulletIt;
+        }
+    }
 
     //边界限制
     sf::Vector2f pos = mPlayer->getPosition();

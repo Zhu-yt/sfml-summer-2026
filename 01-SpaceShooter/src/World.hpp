@@ -43,6 +43,8 @@ class World{
         static const float PlayerSpeed;
         static const float ShootCooldown;
         static const float SpawnCooldown;
+
+        int mScore;
 };
 
 #endif //WORLD_HPP
