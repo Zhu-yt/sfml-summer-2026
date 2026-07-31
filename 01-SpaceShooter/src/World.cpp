@@ -15,6 +15,13 @@ World::World(sf::RenderWindow& window)
 ,mScore(0){
     loadTextures();
     buildScene();
+
+    mFont.loadFromFile("assets/fonts/Sansation.ttf");
+    mScoreText.setFont(mFont);
+    mScoreText.setPosition(10.f, 10.f);
+    mScoreText.setCharacterSize(20);
+    mScoreText.setColor(sf::Color::White);
+    mScoreText.setString("Score: 0");
 }
 
 void World::loadTextures(){
@@ -128,7 +135,8 @@ void World::update(sf::Time dt){
                 enemyIt = mEnemies.erase(enemyIt);
                 hit = true;
                 mScore += 100;
-                std::cout << "Score: " << mScore << "\n";
+                mScoreText.setString("Score: " + std::to_string(mScore));
+
                 break;
             }else{
                 ++enemyIt;
@@ -173,6 +181,8 @@ void World::draw(){
     for(const auto& bullet : mBullets){
         mWindow.draw(bullet);
     }
+
+    mWindow.draw(mScoreText);
 
     mWindow.display();
 }

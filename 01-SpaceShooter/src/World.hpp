@@ -24,6 +24,8 @@ class World{
 
     private:
         sf::RenderWindow& mWindow;
+        sf::Font mFont;
+        sf::Text mScoreText;
         ResourceHolder<sf::Texture, Textures::ID> mTextures;
         
         std::unique_ptr<Aircraft> mPlayer;
