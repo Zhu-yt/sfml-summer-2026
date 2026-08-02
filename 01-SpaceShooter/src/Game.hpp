@@ -11,10 +11,17 @@ class Game{
 
     private:
         void processEvents();
+        void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
+        void handleRealtimeInput();
 
     private:
         sf::RenderWindow mWindow;
         World mWorld;
+
+        bool mIsMovingLeft = false;
+        bool mIsMovingRight = false;
+        bool mIsMovingUp = false;
+        bool mIsMovingDown = false;
 };
 
 #endif // GAME_HPP

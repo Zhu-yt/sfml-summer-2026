@@ -15,6 +15,7 @@ class Aircraft : public Entity{
         explicit Aircraft(Type type, const ResourceHolder<sf::Texture, Textures::ID>& Textures);
 
         void updateCurrent(sf::Time dt) override;
+        unsigned int getCategory() const override;
 
     private:
         Type mType;

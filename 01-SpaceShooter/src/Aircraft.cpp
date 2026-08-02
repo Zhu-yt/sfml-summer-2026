@@ -21,3 +21,14 @@ void Aircraft::updateCurrent(sf::Time dt){
         setVelocity(0.f, 200.f);
     }
 }
+
+unsigned int Aircraft::getCategory() const{
+    switch(mType){
+        case Type::Player:
+            return Category::PlayerAircraft;
+        case Type::Enemy:
+            return Category::EnemyAircraft;
+    }
+
+    return Category::None;
+}

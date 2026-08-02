@@ -40,3 +40,7 @@ sf::Vector2f Entity::getPosition() const{
 sf::FloatRect Entity::getBoundingRect() const{
     return mSprite.getGlobalBounds();
 }
+
+unsigned int Entity::getCategory() const{
+    return Category::None;
+}

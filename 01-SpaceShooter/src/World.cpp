@@ -7,10 +7,6 @@ const float World::SpawnCooldown = 2.0f;
 
 World::World(sf::RenderWindow& window)
 :mWindow(window)
-,mIsMovingLeft(false)
-,mIsMovingRight(false)
-,mIsMovingUp(false)
-,mIsMovingDown(false)
 ,mIsShooting(false)
 ,mScore(0){
     loadTextures();
@@ -33,71 +29,41 @@ void World::buildScene(){
     mPlayer->setPosition(sf::Vector2f(336.f, 472.f));
 }
 
-void World::handleEvent(const sf::Event& event){
-    switch(event.type){
-        case sf::Event::KeyPressed:
-            if(event.key.code == sf::Keyboard::A){
-                mIsMovingLeft = true;
-            }
-            if(event.key.code == sf::Keyboard::D){
-                mIsMovingRight = true;
-            }
-            if(event.key.code == sf::Keyboard::W){
-                mIsMovingUp = true;
-            }
-            if(event.key.code == sf::Keyboard::S){
-                mIsMovingDown = true;
-            }
-            if(event.key.code == sf::Keyboard::Space){
-                mIsShooting = true;
-            }
-            break;
-            
-        case sf::Event::KeyReleased:
-            if(event.key.code == sf::Keyboard::A){
-                mIsMovingLeft = false;
-            }
-            if(event.key.code == sf::Keyboard::D){
-                mIsMovingRight = false;
-            }
-            if(event.key.code == sf::Keyboard::W){
-                mIsMovingUp = false;
-            }
-            if(event.key.code == sf::Keyboard::S){
-                mIsMovingDown = false;
-            }
-            if(event.key.code == sf::Keyboard::Space){
-                mIsShooting = false;
-            }
-            break;
-
-        case sf::Event::Closed:
-            mWindow.close();
-            break;
-
-    }
+CommandQueue& World::getCommandQueue(){
+    return mCommandQueue;
 }
 
 void World::update(sf::Time dt){
-    float delta = dt.asSeconds();
+    while(!mCommandQueue.isEmpty()){
+        onCommand(mCommandQueue.pop(), dt);
+    }
+    
+    //连续移动
+    mPlayer->update(dt);
 
-    if(mIsMovingLeft){
-        mPlayer->move(sf::Vector2f(-PlayerSpeed * delta, 0.f));
+    //边界限制
+    sf::Vector2f pos = mPlayer->getPosition();
+
+    if(pos.x < -31.f){
+        pos.x = -31.f;
     }
-    if(mIsMovingRight){
-        mPlayer->move(sf::Vector2f(PlayerSpeed * delta, 0.f));
+    if(pos.x > 800.f - 97.f){
+        pos.x = 800.f - 97.f;
     }
-    if(mIsMovingUp){
-        mPlayer->move(sf::Vector2f(0.f, -PlayerSpeed * delta));
+    if(pos.y < 0.f){
+        pos.y = 0.f;
     }
-    if(mIsMovingDown){
-        mPlayer->move(sf::Vector2f(0.f, PlayerSpeed * delta));
+    if(pos.y > 600.f - 79.f){
+        pos.y = 600.f - 79.f;
     }
+    mPlayer->setPosition(pos);
+
     if(mIsShooting){
         shoot();
     }
 
     //子弹移动
+    float delta = dt.asSeconds();
     for(auto& bullet : mBullets){
         bullet.move(0.f, -500.f * delta);
     }
@@ -111,8 +77,8 @@ void World::update(sf::Time dt){
         mBullets.end()
     );
 
+    //生成敌人和更新
     spawnEnemy();
-
     for(auto& enemy : mEnemies){
         enemy->update(dt);
     }
@@ -149,24 +115,12 @@ void World::update(sf::Time dt){
             ++bulletIt;
         }
     }
+}
 
-    //边界限制
-    sf::Vector2f pos = mPlayer->getPosition();
-
-    if(pos.x < -31.f){
-        pos.x = -31.f;
+void World::onCommand(const Command& command, sf::Time dt){
+    if(command.category & mPlayer->getCategory()){
+        command.action(*mPlayer, dt);
     }
-    if(pos.x > 800.f - 97.f){
-        pos.x = 800.f - 97.f;
-    }
-    if(pos.y < 0.f){
-        pos.y = 0.f;
-    }
-    if(pos.y > 600.f - 79.f){
-        pos.y = 600.f - 79.f;
-    }
-
-    mPlayer->setPosition(pos);
 }
 
 void World::draw(){

@@ -2,6 +2,7 @@
 #define ENTITY_HPP
 
 #include <SFML/Graphics.hpp>
+#include "Category.hpp"
 
 class Entity{
     public:
@@ -20,6 +21,8 @@ class Entity{
         sf::Vector2f getPosition() const;
 
         sf::FloatRect getBoundingRect() const;
+
+        virtual unsigned int getCategory() const;
 
     protected:
         virtual void updateCurrent(sf::Time dt) = 0;

@@ -7,20 +7,24 @@
 #include "ResourceHolder.hpp"
 #include "ResourceIdentifiers.hpp"
 #include "Aircraft.hpp"
+#include "CommandQueue.hpp"
 
 class World{
     public:
         explicit World(sf::RenderWindow& window);
 
-        void handleEvent(const sf::Event& event);
+        CommandQueue& getCommandQueue();
+
         void update(sf::Time dt);
         void draw();
+        void setShooting(bool shooting){mIsShooting = shooting;}
 
     private:
         void loadTextures();
         void buildScene();
         void spawnEnemy();
         void shoot();
+        void onCommand(const Command& command, sf::Time dt);
 
     private:
         sf::RenderWindow& mWindow;
@@ -33,10 +37,8 @@ class World{
 
         std::vector<sf::RectangleShape> mBullets;
 
-        bool mIsMovingLeft;
-        bool mIsMovingRight;
-        bool mIsMovingUp;
-        bool mIsMovingDown;
+        CommandQueue mCommandQueue;
+
         bool mIsShooting;
 
         sf::Clock mSpawnClock;
