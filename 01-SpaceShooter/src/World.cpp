@@ -8,7 +8,10 @@ const float World::SpawnCooldown = 2.0f;
 World::World(sf::RenderWindow& window)
 :mWindow(window)
 ,mIsShooting(false)
-,mScore(0){
+,mScore(0)
+,mMaxHP(100)
+,mPlayerHP(100)
+,mGameOver(false){
     loadTextures();
     buildScene();
 
@@ -18,6 +21,15 @@ World::World(sf::RenderWindow& window)
     mScoreText.setCharacterSize(20);
     mScoreText.setColor(sf::Color::White);
     mScoreText.setString("Score: 0");
+
+    mHPBarBackground.setSize(sf::Vector2f(200.f, 20.f));
+    mHPBarBackground.setFillColor(sf::Color(80, 80, 80));
+    mHPBarBackground.setPosition(10.f, 40.f);
+
+    mHPBar.setSize(sf::Vector2f(200.f, 20.f));
+    mHPBar.setFillColor(sf::Color::Green);
+    mHPBar.setPosition(10.f, 40.f);
+
 }
 
 void World::loadTextures(){
@@ -34,6 +46,10 @@ CommandQueue& World::getCommandQueue(){
 }
 
 void World::update(sf::Time dt){
+    if(mGameOver){
+        return;
+    }
+
     while(!mCommandQueue.isEmpty()){
         onCommand(mCommandQueue.pop(), dt);
     }
@@ -83,15 +99,6 @@ void World::update(sf::Time dt){
         enemy->update(dt);
     }
 
-    //敌人消失
-    mEnemies.erase(
-        std::remove_if(mEnemies.begin(), mEnemies.end(), 
-            [](const std::unique_ptr<Aircraft>& e){
-                return e->getPosition().y > 600.f + 79.f;
-        }),
-        mEnemies.end()
-    );
-
     //碰撞检测
     for(auto bulletIt = mBullets.begin(); bulletIt != mBullets.end(); ){
         bool hit = false;
@@ -115,6 +122,29 @@ void World::update(sf::Time dt){
             ++bulletIt;
         }
     }
+
+    for(auto enemyIt = mEnemies.begin(); enemyIt != mEnemies.end(); ){
+        if((*enemyIt)->getBoundingRect().intersects(mPlayer->getBoundingRect())){
+            mPlayerHP -= 20;
+            enemyIt = mEnemies.erase(enemyIt);
+
+            if(mPlayerHP <= 0){
+                mPlayerHP = 0;
+                mGameOver = true;
+            }
+        }else{
+            ++enemyIt;
+        }
+    }
+    
+    //敌人消失
+    mEnemies.erase(
+        std::remove_if(mEnemies.begin(), mEnemies.end(), 
+            [](const std::unique_ptr<Aircraft>& e){
+                return e->getPosition().y > 600.f + 79.f;
+            }),
+        mEnemies.end()
+    );
 }
 
 void World::onCommand(const Command& command, sf::Time dt){
@@ -136,6 +166,17 @@ void World::draw(){
         mWindow.draw(bullet);
     }
 
+    float hpPercent = static_cast<float>(mPlayerHP)/(mMaxHP);
+    mHPBar.setSize(sf::Vector2f(200.f * hpPercent, 20.f));
+
+    if(hpPercent < 0.3f){
+        mHPBar.setFillColor(sf::Color::Red);
+    }else{
+        mHPBar.setFillColor(sf::Color::Green);
+    }
+
+    mWindow.draw(mHPBarBackground);
+    mWindow.draw(mHPBar);
     mWindow.draw(mScoreText);
 
     mWindow.display();

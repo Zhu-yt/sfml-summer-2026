@@ -49,6 +49,12 @@ class World{
         static const float SpawnCooldown;
 
         int mScore;
+        int mPlayerHP;
+        int mMaxHP;
+        sf::RectangleShape mHPBarBackground;
+        sf::RectangleShape mHPBar;
+
+        bool mGameOver;
 };
 
 #endif //WORLD_HPP
