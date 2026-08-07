@@ -11,17 +11,24 @@ class Game{
 
     private:
         void processEvents();
-        void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
         void handleRealtimeInput();
+        void update(sf::Time dt);
+        void render();
 
     private:
+        enum class State{
+            Menu,
+            Playing,
+            GameOver
+        };
+        State mState;
+
         sf::RenderWindow mWindow;
         World mWorld;
 
-        bool mIsMovingLeft = false;
-        bool mIsMovingRight = false;
-        bool mIsMovingUp = false;
-        bool mIsMovingDown = false;
+        sf::Font mFont;
+        sf::Text mMenuText;
+        sf::Text mGameOverText;
 };
 
 #endif // GAME_HPP

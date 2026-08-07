@@ -154,8 +154,6 @@ void World::onCommand(const Command& command, sf::Time dt){
 }
 
 void World::draw(){
-    mWindow.clear(sf::Color::Black);
-
     mPlayer->draw(mWindow);
 
     for(auto& enemy : mEnemies){
@@ -178,8 +176,23 @@ void World::draw(){
     mWindow.draw(mHPBarBackground);
     mWindow.draw(mHPBar);
     mWindow.draw(mScoreText);
+}
 
-    mWindow.display();
+void World::reset(){
+    mPlayer->setPosition(sf::Vector2f(336.f, 472.f));
+    mPlayer->setVelocity(sf::Vector2f(0.f, 0.f));
+
+    mPlayerHP = mMaxHP;
+    mGameOver = false;
+
+    mScore = 0;
+    mScoreText.setString("Score: 0");
+
+    mEnemies.clear();
+    mBullets.clear();
+
+    mSpawnClock.restart();
+    mShootClock.restart();
 }
 
 void World::shoot(){

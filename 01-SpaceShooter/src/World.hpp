@@ -17,7 +17,10 @@ class World{
 
         void update(sf::Time dt);
         void draw();
-        void setShooting(bool shooting){mIsShooting = shooting;}
+        void reset();
+        bool isGameOver() const {return mGameOver;};
+        void setShooting(bool shooting) {mIsShooting = shooting;}
+        int getScore() const {return mScore;}
 
     private:
         void loadTextures();
